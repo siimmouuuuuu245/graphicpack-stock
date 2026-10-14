@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script>
+      // Fix for browser extensions and interceptors trying to overwrite window.fetch
+      (function() {
+        try {
+          var _rawFetch = window.fetch;
+          var _currentFetch = typeof _rawFetch === 'function' ? _rawFetch.bind(window) : _rawFetch;
+          Object.defineProperty(window, 'fetch', {
+            get: function() {
+              return _currentFetch;
+            },
+            set: function(fn) {
+              _currentFetch = fn;
+            },
+            configurable: true,
+            enumerable: true
+          });
+        } catch (e) {
+          try {
+            var orig = window.fetch;
+            Object.defineProperty(Object.getPrototypeOf(window) || window, 'fetch', {
+              get: function() { return orig; },
+              set: function(fn) { orig = fn; },
+              configurable: true,
+              enumerable: true
+            });
+          } catch (err) {}
+        }
+
+        // Suppress benign third-party/extension errors
+        window.addEventListener('error', function(event) {
+          var msg = (event && (event.message || (event.error && event.error.message))) || '';
+          var file = (event && event.filename) || '';
+          if (
+            msg.indexOf('Cannot set property fetch') !== -1 ||
+            msg.indexOf('only a getter') !== -1 ||
+            file.indexOf('chrome-extension://') !== -1 ||
+            file.indexOf('requests.js') !== -1
+          ) {
+            if (event.preventDefault) event.preventDefault();
+            if (event.stopImmediatePropagation) event.stopImmediatePropagation();
+            return true;
+          }
+        }, true);
+
+        window.addEventListener('unhandledrejection', function(event) {
+          var reason = event && event.reason;
+          var msg = (typeof reason === 'string' ? reason : (reason && reason.message) || '') + '';
+          var stack = (reason && reason.stack) || '';
+          if (
+            msg.indexOf('Cannot set property fetch') !== -1 ||
+            msg.indexOf('only a getter') !== -1 ||
+            stack.indexOf('chrome-extension://') !== -1 ||
+            stack.indexOf('requests.js') !== -1
+          ) {
+            if (event.preventDefault) event.preventDefault();
+            if (event.stopImmediatePropagation) event.stopImmediatePropagation();
+          }
+        }, true);
+      })();
+    </script>
+    <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
+    <title>Graphic Pack - Gestion de Stock Clichés Flexo</title>
+    <meta name="description" content="Application professionnelle de gestion de stock pour atelier d'imprimerie Graphic Pack : suivi des plaques photopolymères, cartons, mouvements, et mesure par vision IA des dimensions de clichés." />
+    <meta property="og:title" content="Graphic Pack - Gestion de Stock Clichés Flexo" />
+    <meta property="og:description" content="Application professionnelle de gestion de stock pour atelier d'imprimerie Graphic Pack : suivi des plaques photopolymères, cartons, mouvements, et mesure par vision IA des dimensions de clichés." />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+    <script type="module" crossorigin src="./assets/index-BLaltM4j.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-DDf7nfzc.css">
+  </head>
+  <body class="bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 antialiased selection:bg-emerald-100 dark:selection:bg-emerald-900 selection:text-emerald-900 dark:selection:text-emerald-100">
+    <div id="root"></div>
+  </body>
+</html>
+
